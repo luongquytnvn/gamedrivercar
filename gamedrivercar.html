@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game driver car</title>
+</head>
+<body onload="onLoad()">
+<canvas id="myCanvas" style="border: 1px solid" width="1330" height="610"></canvas>
+<script>
+    let xWidth = 300;
+    let xHeight = 300;
+    let thuong1 = true;
+    let thuong2 = true;
+    let thuong3 = true;
+    let speed = true;
+    let turn = 'turnright';
+    let count = 0;
+    let ctx = document.getElementById('myCanvas').getContext('2d');
+    let image = function (xWidth, xHeight) {
+        this.xWidth = xWidth;
+        this.xHeight = xHeight;
+    };
+
+    function loseGame() {
+        ctx.clearRect(0, 0, 1330, 610);
+        ctx.fillStyle = "red";
+        ctx.font = "50px Arial";
+        ctx.fillText("You lose", 600, 300);
+        window.removeEventListener('keydown', moveSelection);
+    }
+
+    function addPoint() {
+        count += 100;
+    }
+
+    function drawCar() {
+        this.img = new Image();
+        img.onload = function () {
+            if (xWidth < 5) {
+                xWidth = 1325;
+            } else if (xWidth > 1325) {
+                xWidth = 5;
+            }
+            if (xHeight < 5) {
+                xHeight = 605;
+            } else if (xHeight > 605) {
+                xHeight = 5;
+            }
+            ctx.clearRect(0, 0, 1330, 610);
+            ctx.drawImage(img, xWidth, xHeight);
+            ctx.fillStyle = "black";
+            ctx.fillRect(400, 300, 20, 20);
+            ctx.fillRect(180, 180, 20, 20);
+            ctx.fillRect(900, 400, 20, 20);
+            ctx.fillStyle = "yellow";
+            if (thuong1) {
+                ctx.fillRect(400, 500, 20, 20);
+                if (xWidth >= 400 && xWidth <= 430 && xHeight >= 500 && xHeight <= 530) {
+                    thuong1 = false;
+                    addPoint();
+                }
+            }
+            if (thuong2) {
+                ctx.fillRect(400, 100, 20, 20);
+                if (xWidth >= 400 && xWidth <= 430 && xHeight >= 100 && xHeight <= 130) {
+                    thuong2 = false;
+                    addPoint();
+                }
+            }
+            if (thuong3) {
+                ctx.fillRect(800, 200, 20, 20);
+                if (xWidth >= 800 && xWidth <= 830 && xHeight >= 200 && xHeight <= 230) {
+                    thuong3 = false;
+                    addPoint();
+                }
+            }
+
+            ctx.font = "20px Arial";
+            ctx.strokeText(count, 1250, 30);
+            if ((xWidth >= 400 && xWidth <= 430 && xHeight >= 300 && xHeight <= 330) || (xWidth >= 180 && xWidth <= 210 && xHeight >= 180 && xHeight <= 210) || (xWidth >= 900 && xWidth <= 930 && xHeight >= 400 && xHeight <= 430)) {
+                loseGame();
+            }
+        }
+        img.src = turn + ".png";
+    }
+
+    function upArrowPressed() {
+        if (speed == true) {
+            xHeight = xHeight - 5;
+            count++;
+        } else {
+            xHeight = xHeight - 15;
+            count++;
+            count++;
+            count++;
+        }
+        drawCar();
+    }
+
+    function downArrowPressed() {
+        if (speed == true) {
+            xHeight = xHeight + 5;
+            count++;
+        } else {
+            xHeight = xHeight + 15;
+            count++;
+            count++;
+            count++;
+        }
+        drawCar();
+    }
+
+    function leftArrowPressed() {
+        if (speed == true) {
+            xWidth = xWidth - 5;
+            count++;
+        } else {
+            xWidth = xWidth - 15;
+            count++;
+            count++;
+            count++;
+        }
+        drawCar();
+    }
+
+    function rightArrowPressed() {
+        if (speed == true) {
+            xWidth = xWidth + 5;
+            count++;
+        } else {
+            xWidth = xWidth + 15;
+            count++;
+            count++;
+            count++;
+        }
+        drawCar();
+    }
+
+    function ctrlPressed() {
+        if (speed == true) {
+            speed = false;
+        } else {
+            speed = true;
+        }
+    }
+
+    function moveSelection(evt) {
+        switch (evt.keyCode) {
+            case 37:
+                turn = 'turnleft';
+                leftArrowPressed();
+                break;
+            case 39:
+                turn = 'turnright';
+                rightArrowPressed();
+                break;
+            case 38:
+                turn = 'turnup';
+                upArrowPressed();
+                break;
+            case 40:
+                turn = 'turndown';
+                downArrowPressed();
+                break;
+            case 17:
+                ctrlPressed();
+                break;
+        }
+
+    }
+
+    drawCar();
+
+    function onLoad() {
+        window.addEventListener('keydown', moveSelection);
+    }
+</script>
+</body>
+</html>

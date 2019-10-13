@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car OOP</title>
+</head>
+<body onkeydown="gameBoard.moveSelection(event)">
+<canvas id="idcanvas" style="border: 1px solid cadetblue" height="500" width="1000"></canvas>
+<script>
+    let c = document.getElementById('idcanvas');
+    let ctx = c.getContext('2d');
+    let count = 0;
+    let addpoint = true;
+    let stop = true;
+
+    function Car1() {
+        this.weight = 300;
+        this.height = 300;
+        this.turn2 = 'turndown';
+        this.speedup = true;
+        this.getWeight = function () {
+            return this.weight;
+        };
+        this.getHeight = function () {
+            return this.height;
+        };
+        this.drawcar = function () {
+            this.obstacle1 = new Obstacle(100, 100);
+            this.obstacle2 = new Obstacle(200, 200);
+            this.obstacle3 = new Obstacle(700, 300);
+            let image = new Image();
+            if (this.weight < 0) {
+                this.weight = 1000;
+            } else if (this.weight > 1000) {
+                this.weight = 0;
+            }
+            if (this.height < 0) {
+                this.height = 500;
+            } else if (this.height > 500) {
+                this.height = 0;
+            }
+            let weight = this.getWeight();
+            let height = this.getHeight();
+            image.src = this.turn2 + '.png';
+            image.onload = function () {
+                ctx.clearRect(0, 0, 1000, 500);
+                ctx.drawImage(image, weight, height);
+                ctx.fillStyle = 'black';
+                gameBoard.car1.obstacle1.drawObstacle();
+                gameBoard.car1.obstacle2.drawObstacle();
+                gameBoard.car1.obstacle3.drawObstacle();
+                ctx.font = "20px Arial";
+                ctx.strokeText(count, 950, 30);
+                if (weight > (gameBoard.car1.obstacle1.xobstacle - 60) && weight < (gameBoard.car1.obstacle1.xobstacle + 30) && height > (gameBoard.car1.obstacle1.yobstacle - 30) && height < (gameBoard.car1.obstacle1.yobstacle + 30) || weight > (gameBoard.car1.obstacle2.xobstacle - 60) && weight < (gameBoard.car1.obstacle2.xobstacle + 30) && height > (gameBoard.car1.obstacle2.yobstacle - 30) && height < (gameBoard.car1.obstacle2.yobstacle + 30) || weight > (gameBoard.car1.obstacle3.xobstacle - 60) && weight < (gameBoard.car1.obstacle3.xobstacle + 30) && height > (gameBoard.car1.obstacle3.yobstacle - 30) && height < (gameBoard.car1.obstacle3.yobstacle + 30)) {
+                    gameBoard.car1.gameLose();
+                }
+                if (addpoint) {
+                    ctx.fillStyle = 'gold';
+                    ctx.fillRect(350, 200, 30, 30);
+                    if (weight > 290 && weight < 380 && height > 140 && height < 230) {
+                        gameBoard.car1.addPoint();
+                        addpoint = false;
+                    }
+                }
+            };
+        };
+        this.addPoint = function () {
+            count += 1000;
+        };
+        this.gameLose = function () {
+            ctx.clearRect(0, 0, 1000, 500);
+            ctx.fillStyle = "red";
+            ctx.font = "50px Arial";
+            ctx.fillText("You lose", 450, 250);
+            stop = false;
+        };
+
+        this.driverCar = function () {
+            switch (this.turn2) {
+                case 'turnleft':
+                    if (this.speedup) {
+                        this.weight -= 10;
+                        count++;
+                    } else {
+                        this.weight -= 20;
+                        count++;
+                        count++;
+                    }
+                    break;
+                case 'turnright':
+                    if (this.speedup) {
+                        this.weight += 10;
+                        count++;
+                    } else {
+                        this.weight += 20;
+                        count++;
+                        count++;
+                    }
+                    break;
+                case 'turnup':
+                    if (this.speedup) {
+                        this.height -= 10;
+                        count++;
+                    } else {
+                        this.height -= 20;
+                        count++;
+                        count++;
+                    }
+                    break;
+                case 'turndown':
+                    if (this.speedup) {
+                        this.height += 10;
+                        count++;
+                    } else {
+                        this.height += 20;
+                        count++;
+                        count++;
+                    }
+                    break;
+            }
+        };
+        this.speedUp = function () {
+            if (this.speedup) {
+                this.speedup = false;
+            } else {
+                this.speedup = true;
+            }
+        };
+    }
+
+    function Obstacle(xobstacle, yobstacle) {
+        this.xobstacle = xobstacle;
+        this.yobstacle = yobstacle;
+        this.drawObstacle = function () {
+            ctx.fillRect(this.xobstacle, this.yobstacle, 30, 30);
+        }
+    }
+
+    function GameBoard() {
+        this.car1 = new Car1();
+
+        this.moveSelection = function (evt) {
+            if (stop) {
+                let turn1 = 0;
+                switch (evt.keyCode) {
+                    case 37:
+                        turn1 = 'turnleft';
+                        break;
+                    case 39:
+                        turn1 = 'turnright';
+                        break;
+                    case 38:
+                        turn1 = 'turnup';
+                        break;
+                    case 40:
+                        turn1 = 'turndown';
+                        break;
+                    case 17:
+                        this.car1.speedUp();
+                        break;
+                }
+                console.log(turn1);
+                if (turn1) {
+                    if (this.car1.turn2 !== turn1) {
+                        this.car1.turn2 = turn1;
+                    } else {
+                        this.car1.driverCar();
+                    }
+                    this.car1.drawcar();
+                }
+            }
+        };
+    }
+
+    let gameBoard = new GameBoard();
+    gameBoard.car1.drawcar();
+
+</script>
+</body>
+</html>
